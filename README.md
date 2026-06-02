@@ -7,11 +7,11 @@ Chtěl bych tam mít i hovorovou komunikaci, autentizace při přihlášení a m
 Dodatečné funkce jsou video hovory, kontrola hovorů, gify a nahrávání vlastních fotek (rozpoznávání řeči)
 
 ### Technologie
-Frontend - JavaScript, Tailwind CSS, React
-Vite pro správu.
-Prisma na ORM s PostgreSQL a Node.js
-Cloudinary jako úložiště imgs.
-YouTube IFrame API na hudbu
-Tenor API na gify
-Auth.js na přihlášení přes Google a Discord.
-Livekit SDK na hovory
+Frontend - JavaScript, Tailwind CSS, React\
+Vite pro správu.\
+Prisma na ORM s PostgreSQL a Node.js\
+Cloudinary jako úložiště imgs.\
+YouTube IFrame API na hudbu\
+Tenor API na gify\
+Auth.js na přihlášení přes Google a Discord.\
+Livekit SDK na hovory\
