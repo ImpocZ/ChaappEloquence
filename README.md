@@ -1,6 +1,6 @@
 # ChaappEloquence
 ## Hlavní myšlenka
-### --------------------
+
 Cílem je vytvořit chattovací aplikaci, která by navázala na můj velmi amatérský pokus v 2. ročníku.
 Hlavní je vytvořit aplikaci s mnoha místnostmi, které by sami uživatelé mohli tvořit a upravovat.
 Chtěl bych tam mít i hovorovou komunikaci, autentizace při přihlášení a možnost hraní hudby v místnostech, ať už general, nebo specifické vytvořené uživateli.
