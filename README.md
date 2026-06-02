@@ -14,4 +14,4 @@ Cloudinary jako úložiště imgs.\
 YouTube IFrame API na hudbu\
 Tenor API na gify\
 Auth.js na přihlášení přes Google a Discord.\
-Livekit SDK na hovory\
+Livekit SDK na hovory
