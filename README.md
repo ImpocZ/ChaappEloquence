@@ -5,3 +5,6 @@ Cílem je vytvořit chattovací aplikaci, která by navázala na můj velmi amat
 Hlavní je vytvořit aplikaci s mnoha místnostmi, které by sami uživatelé mohli tvořit a upravovat.
 Chtěl bych tam mít i hovorovou komunikaci, autentizace při přihlášení a možnost hraní hudby v místnostech, ať už general, nebo specifické vytvořené uživateli.
 Dodatečné funkce jsou video hovory, kontrola hovorů, gify a nahrávání vlastních fotek.
+
+### Technologie
+Zatím vím jen o JavaScriptu a Node.
