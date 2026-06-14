@@ -1,4 +1,4 @@
-# ChaappEloquence
+# ChaappEloquence - Maturitní projekt
 ## Hlavní myšlenka
 
 Cílem je vytvořit chattovací aplikaci, která by navázala na můj velmi amatérský pokus v 2. ročníku.
