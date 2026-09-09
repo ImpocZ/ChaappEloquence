@@ -9,7 +9,7 @@ Dodatečné funkce jsou video hovory, kontrola hovorů, gify a nahrávání vlas
 ### Technologie
 Frontend - JavaScript, Tailwind CSS, React nebo Vue\
 Vite pro správu.\
-Prisma na ORM s PostgreSQL (nebo SUPABASE) a Node.js\
+Prisma na ORM s PostgreSQL (nebo SUPABASE) a Node.js - Socket.io, Express\
 Cloudinary jako úložiště imgs.\
 YouTube IFrame API na hudbu\
 Klipy API na gify: "https://docs.klipy.com/getting-started"\
