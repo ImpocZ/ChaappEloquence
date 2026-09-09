@@ -12,6 +12,6 @@ Vite pro správu.\
 Prisma na ORM s PostgreSQL (nebo SUPABASE) a Node.js\
 Cloudinary jako úložiště imgs.\
 YouTube IFrame API na hudbu\
-Tenor API na gify\
+Klipy API na gify: "https://docs.klipy.com/getting-started"\
 Auth.js na přihlášení přes Google a Discord.\
 Livekit SDK na hovory
