@@ -1,8 +1,8 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import Landing from './views/Landing.vue'
 </script>
 
 <template>
-  <HelloWorld />
+  <Landing />
 
 </template>
