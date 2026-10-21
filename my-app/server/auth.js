@@ -8,6 +8,7 @@
 import express from 'express';
 import 'dotenv/config';
 import session from 'cookie-session';
+import cors from 'cors';
 
 const app = express();
 
@@ -17,6 +18,12 @@ app.use(session({
   httpOnly: true,
   maxAge: 24 * 60 * 60 * 1000,
 }));
+
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+}));   
+
 
 const client_id = process.env.GITHUB_CLIENT_ID;
 const client_secret = process.env.GITHUB_CLIENT_SECRET;
@@ -48,6 +55,11 @@ app.get('/callback', async (req, res) => {
   req.session.avatar = user.avatar_url;
 
   res.redirect('http://localhost:5173/chat');
+});
+
+app.get('/api/me', (req, res) => {
+  if (!req.session.user) return res.status(401).json({ error: 'not authed' });
+  res.json({ login: req.session.user, avatar: req.session.avatar });
 });
 
 app.listen(3001, () => console.log('Server running on http://localhost:3001'));   
