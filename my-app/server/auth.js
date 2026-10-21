@@ -6,10 +6,17 @@
 //https://github.com/login/oauth/authorize
 //Need to create a local .env file and install dotenv
 import express from 'express';
-require('dotenv').config();
-
+import 'dotenv/config';
+import session from 'cookie-session';
 
 const app = express();
+
+app.use(session({
+  name: 'auth',
+  keys: [process.env.SECRET_KEY1, process.env.SECRET_KEY2],
+  httpOnly: true,
+  maxAge: 24 * 60 * 60 * 1000,
+}));
 
 const client_id = process.env.GITHUB_CLIENT_ID;
 const client_secret = process.env.GITHUB_CLIENT_SECRET;
@@ -22,11 +29,11 @@ app.get('/auth/github', (req, res) => {
 app.get('/callback', async (req, res) => {
   const { code } = req.query;
 
-  // Trade code for token (server-to-server, just a fetch)
+  // Trade code for token
   const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify({ client_id: client_id, client_secret: client_secret, code, redirect_uri: redirect_uri }),
+    body: JSON.stringify({ client_id, client_secret, code, redirect_uri }),
   });
   const { access_token } = await tokenRes.json();
 
@@ -36,9 +43,11 @@ app.get('/callback', async (req, res) => {
   });
   const user = await userRes.json();
 
-  // Now you have `user.login`, `user.avatar_url`, etc.
-  // Set a cookie, create a session, redirect to your frontend — your choice.
-  res.redirect(`http://localhost:5173/?user=${encodeURIComponent(user.login)}`);
-});   
+  // Store in session
+  req.session.user = user.login;
+  req.session.avatar = user.avatar_url;
 
-app.listen(3001, () => console.log('Server running on http://localhost:3001'));
+  res.redirect('http://localhost:5173/chat');
+});
+
+app.listen(3001, () => console.log('Server running on http://localhost:3001'));   

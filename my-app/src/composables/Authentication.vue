@@ -7,6 +7,8 @@
 
   }
   const openAuthenticationGithub = () => {
+    window.location.href = 'http://localhost:3001/auth/github';
+ // This will redirect the user to the GitHub authentication page
 
   }
 </script>
