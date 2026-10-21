@@ -4,12 +4,15 @@
 //via access token, fetch user data from github and send it to the client
 //voila, user sees his name and avatar on the client side and can use the app
 //https://github.com/login/oauth/authorize
+//Need to create a local .env file and install dotenv
 import express from 'express';
+require('dotenv').config();
+
 
 const app = express();
 
-const client_id;
-const client_secret;
+const client_id = process.env.GITHUB_CLIENT_ID;
+const client_secret = process.env.GITHUB_CLIENT_SECRET;
 const redirect_uri = "http://localhost:3001/callback";
 
 app.get('/auth/github', (req, res) => {
