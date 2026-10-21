@@ -8,8 +8,8 @@ import express from 'express';
 
 const app = express();
 
-const client_id = "Ov23liVGKeR1OVR1ajck";
-const client_secret = "825bc94237c9097df5a5669cb2e33234f116c44d";
+const client_id;
+const client_secret;
 const redirect_uri = "http://localhost:3001/callback";
 
 app.get('/auth/github', (req, res) => {
