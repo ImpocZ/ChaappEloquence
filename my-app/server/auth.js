@@ -16,7 +16,7 @@ app.use(session({
   name: 'auth',
   keys: [process.env.SECRET_KEY1, process.env.SECRET_KEY2],
   httpOnly: true,
-  maxAge: 24 * 60 * 60 * 1000,
+  maxAge: /*24 * 60 * 60*/ 10 * 1000,
 }));
 
 app.use(cors({
