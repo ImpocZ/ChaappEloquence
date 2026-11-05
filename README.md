@@ -1,4 +1,8 @@
 # ChaappEloquence - Maturitní projekt
+
+Odkaz na diagram databáze
+https://dbdiagram.io/d/ChattingApp-6ada61e3f65bbc60f608cffb
+
 ## Hlavní myšlenka
 
 Cílem je vytvořit chattovací aplikaci, která by navázala na můj velmi amatérský pokus v 2. ročníku.
