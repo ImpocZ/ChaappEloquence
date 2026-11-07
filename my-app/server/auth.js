@@ -48,7 +48,7 @@ app.get('/callback', async (req, res) => {
   // Get the user
   const userRes = await fetch('https://api.github.com/user', {
       headers: { Authorization: `token ${access_token}` },
-    });
+  });
   const user = await userRes.json();
 
   if (!userRes.ok || user.id == null) {
@@ -89,6 +89,15 @@ app.get('/callback', async (req, res) => {
           [userId, githubId]
         );
       }
+      
+      await db.query(
+        `INSERT INTO memberships (user_id, room_id)
+        SELECT $1, room_id
+        FROM rooms
+        WHERE type = 'general'
+        ON CONFLICT (user_id, room_id) DO NOTHING`,
+        [userId]
+      );
 
       await db.query('COMMIT');
     } catch (error) {
@@ -182,6 +191,57 @@ app.post('/api/me/username', express.json(), async (req, res) => {
 
     console.error('Could not save username:', error.message);
     return res.status(500).json({ error: 'Could not save username.' });
+  }
+});
+
+app.post('/api/rooms/:roomId/messages', express.json(), async (req, res) => {
+  const userId = req.session?.userId;
+
+  if (userId == null) {
+    return res.status(401).json({ error: 'Not signed in.' });
+  }
+
+  const roomId = req.params.roomId;
+
+  if (
+    !/^[1-9]\d{0,18}$/.test(roomId) ||
+    BigInt(roomId) > 9223372036854775807n
+  ) {
+    return res.status(400).json({ error: 'Invalid room ID.' });
+  }
+
+  const content = typeof req.body?.content === 'string'
+    ? req.body.content.trim()
+    : '';
+
+  if (content.length === 0) {
+    return res.status(400).json({ error: 'Write a message before sending.' });
+  }
+
+  try {
+    const result = await pool.query(
+      `INSERT INTO messages (membership_id, content)
+       SELECT memberships.membership_id, $1
+       FROM memberships
+       JOIN users ON users.user_id = memberships.user_id
+       WHERE memberships.user_id = $2
+         AND memberships.room_id = $3
+         AND memberships.membership_active = TRUE
+         AND users.username IS NOT NULL
+       RETURNING message_id, membership_id, content, created_at`,
+      [content, userId, roomId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(403).json({
+        error: 'A nickname and active room membership are required.',
+      });
+    }
+
+    return res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Could not save message:', error.message);
+    return res.status(500).json({ error: 'Could not save message.' });
   }
 });
 
