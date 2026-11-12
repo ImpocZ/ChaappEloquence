@@ -1,5 +1,6 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
+import { io } from 'socket.io-client';
 
 const messages = ref([]);
 const loading = ref(true);
@@ -71,14 +72,34 @@ async function sendMessage() {
 
     draft.value = '';
     await loadMessages();
-  } catch {
+    } catch {
         sendError.value = 'Could not confirm the send. Check the room before retrying.';
-  } finally {
+    } finally {
         sending.value = false;
-  }
+    }
 }
 
-onMounted(loadMessages);
+let socket;
+
+onMounted(() => {
+    loadMessages();
+
+    socket = io('http://localhost:3001', {
+    withCredentials: true,
+    auth: { roomId: props.roomId },
+    });
+
+    socket.on('room:ready', loadMessages);
+    socket.on('messages:changed', loadMessages);
+
+    socket.on('connect_error', error => {
+        console.error('Chat socket could not connect:', error.message);
+    });
+});
+
+onUnmounted(() => {
+    socket?.disconnect();
+});
 </script>
 
 <template>

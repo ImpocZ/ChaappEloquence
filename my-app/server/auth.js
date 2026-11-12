@@ -10,22 +10,81 @@ import 'dotenv/config';
 import session from 'cookie-session';
 import cors from 'cors';
 import { pool } from './db.js';
+import { createServer } from 'node:http';
+import { Server } from 'socket.io';
+
 
 const app = express();
 
-app.use(session({
+const sessionMiddleware = session({
   name: 'auth',
   keys: [process.env.SECRET_KEY1, process.env.SECRET_KEY2],
   httpOnly: true,
   maxAge: 60 * 60 * 1000, // 1 hour in milliseconds
-}));
+});
+
+app.use(sessionMiddleware);
+// Socket
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: 'http://localhost:5173',
+    credentials: true,
+  },
+});
+
+io.engine.use(sessionMiddleware);
+
+io.use(async (socket, next) => {
+  const userId = socket.request.session?.userId;
+  const roomId = socket.handshake.auth.roomId;
+
+  if (userId == null) {
+    return next(new Error('Not signed in.'));
+  }
+
+  if (
+    typeof roomId !== 'string' ||
+    !/^[1-9]\d{0,18}$/.test(roomId) ||
+    BigInt(roomId) > 9223372036854775807n
+  ) {
+    return next(new Error('Invalid room ID.'));
+  }
+
+  try {
+    const result = await pool.query(
+      `SELECT 1
+       FROM memberships
+       WHERE user_id = $1
+         AND room_id = $2
+         AND membership_active = TRUE`,
+      [userId, roomId]
+    );
+
+    if (result.rows.length === 0) {
+      return next(new Error('Active room membership is required.'));
+    }
+
+    socket.data.roomId = roomId;
+    next();
+  } catch (error) {
+    console.error('Could not check socket membership:', error.message);
+    next(new Error('Could not join the room.'));
+  }
+});
+
+io.on('connection', async socket => {
+  await socket.join(`room:${socket.data.roomId}`);
+  socket.emit('room:ready');
+});
+// Socket!
 
 app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true,
 }));   
 
-
+//Secrets with redirecturl for auth - github for now 
 const client_id = process.env.GITHUB_CLIENT_ID;
 const client_secret = process.env.GITHUB_CLIENT_SECRET;
 const redirect_uri = "http://localhost:3001/callback";
@@ -237,7 +296,7 @@ app.post('/api/rooms/:roomId/messages', express.json(), async (req, res) => {
         error: 'A nickname and active room membership are required.',
       });
     }
-
+    io.to(`room:${roomId}`).emit('messages:changed');
     return res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error('Could not save message:', error.message);
@@ -301,7 +360,7 @@ async function startServer() {
     const result = await pool.query('SELECT current_database() AS database');
     console.log('Connected to PostgreSQL:', result.rows[0].database);
 
-    app.listen(3001, () => {
+    httpServer.listen(3001, () => {
       console.log('Server running on http://localhost:3001');
     });
   } catch (error) {
