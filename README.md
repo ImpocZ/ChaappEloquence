@@ -36,3 +36,6 @@ Livekit SDK na hovory
 
 ### Completed
 Github Auth - 21.10.2026 - the default for dev
+Public Room - 12.10.2026 - general room works.
+Database - circa beginning of November implemented locally
+Docker - 18.10.2026
