@@ -1,4 +1,15 @@
-FROM node:24-bookworm-slim
+FROM node:24-bookworm-slim AS frontend-build
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY . .
+RUN npm run build
+
+
+FROM node:24-bookworm-slim AS runtime
 
 WORKDIR /app
 
@@ -6,6 +17,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
 COPY --chown=node:node server/ ./server/
+COPY --from=frontend-build --chown=node:node /app/dist ./dist/
 
 USER node
 

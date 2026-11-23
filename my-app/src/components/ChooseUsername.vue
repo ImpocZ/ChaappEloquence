@@ -11,7 +11,7 @@ async function saveUsername() {
   error.value = '';
 
   try {
-    const response = await fetch('http://localhost:3001/api/me/username', {
+    const response = await fetch('/api/me/username', {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },

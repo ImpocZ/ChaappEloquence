@@ -7,7 +7,7 @@ export function useAuth() {
 
   onMounted(async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/me', {
+      const res = await fetch('/api/me', {
         credentials: 'include',
       });
 

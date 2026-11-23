@@ -15,7 +15,7 @@ async function loadMessages() {
     loading.value = true;
     error.value = '';
     try {
-        const response = await fetch(`http://localhost:3001/api/rooms/${props.roomId}/messages`, {
+        const response = await fetch(`/api/rooms/${props.roomId}/messages`, {
         credentials: 'include',
     });
 
@@ -55,7 +55,7 @@ async function sendMessage() {
 
   try {
     const response = await fetch(
-      `http://localhost:3001/api/rooms/${props.roomId}/messages`,
+      `/api/rooms/${props.roomId}/messages`,
       {
         method: 'POST',
         credentials: 'include',
@@ -84,7 +84,7 @@ let socket;
 onMounted(() => {
     loadMessages();
 
-    socket = io('http://localhost:3001', {
+    socket = io({
     withCredentials: true,
     auth: { roomId: props.roomId },
     });

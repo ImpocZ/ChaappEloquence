@@ -1,6 +1,6 @@
 <script setup>
 function openAuthenticationGithub() {
-  window.location.href = 'http://localhost:3001/auth/github';
+  window.location.href = '/auth/github';
 }
 </script>
 

@@ -8,6 +8,7 @@ import { registerAuthRoutes } from './auth.js';
 import { registerRoomRoutes } from './rooms.js';
 import { registerMessageRoutes } from './messages.js';
 import { setupRealtime } from './realtime.js';
+import { fileURLToPath } from 'node:url';
 
 const app = express();
 const port = Number(process.env.PORT ?? 3001);
@@ -30,12 +31,21 @@ registerAuthRoutes(app, frontendOrigin);
 registerRoomRoutes(app);
 registerMessageRoutes(app, io);
 
+const frontendDirectory = fileURLToPath(new URL('../dist/', import.meta.url));
+const frontendIndex = fileURLToPath(new URL('../dist/index.html', import.meta.url));
+
+app.use(express.static(frontendDirectory));
+
+app.get(['/','/chat'], (req, res) => {
+  res.sendFile(frontendIndex);
+});
+
 async function startServer() {
   try {
     const result = await pool.query('SELECT current_database() AS database');
     console.log('Connected to PostgreSQL:', result.rows[0].database);
 
-    httpServer.listen(port, () => {
+    httpServer.listen(port, '0.0.0.0', () => {
       console.log(`Server listening on port ${port}`);
     });
   } catch (error) {

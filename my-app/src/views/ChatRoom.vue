@@ -56,7 +56,7 @@ async function loadRooms() {
   roomsError.value = '';
 
   try {
-    const response = await fetch('http://localhost:3001/api/rooms', {
+    const response = await fetch('/api/rooms', {
       credentials: 'include',
     });
 
