@@ -26,3 +26,5 @@ my-app/server/.env
 *.njsproj
 *.sln
 *.sw?
+
+chatting_app_backup.sql

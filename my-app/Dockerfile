@@ -17,6 +17,8 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
 COPY --chown=node:node server/ ./server/
+COPY --chown=node:node ChattingApp.sql ./database/00_initial.sql
+COPY --chown=node:node migrations/ ./database/
 COPY --from=frontend-build --chown=node:node /app/dist ./dist/
 
 USER node

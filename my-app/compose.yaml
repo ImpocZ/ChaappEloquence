@@ -1,3 +1,13 @@
+x-app-image: &app-image
+  image: ghcr.io/impocz/chaappeloquence:latest
+
+x-database-environment: &database-environment
+  PGHOST: db
+  PGPORT: "5432"
+  PGDATABASE: chatting_app
+  PGUSER: chatting_app
+  PGPASSWORD: "${PGPASSWORD:?Set PGPASSWORD in your env file}"
+
 services:
   db:
     image: postgres:17
@@ -7,23 +17,41 @@ services:
       POSTGRES_PASSWORD: "${PGPASSWORD:?Set PGPASSWORD in your env file}"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./ChattingApp.sql:/docker-entrypoint-initdb.d/00_chatting_app.sql:ro
-      - ./migrations/01_add_auth_accounts.sql:/docker-entrypoint-initdb.d/01_add_auth_accounts.sql:ro
-      - ./migrations/02_link_messages_to_memberships.sql:/docker-entrypoint-initdb.d/02_link_messages_to_memberships.sql:ro
     healthcheck:
-      test: ["CMD", "pg_isready", "-h", "127.0.0.1", "-U", "chatting_app", "-d", "chatting_app"]
+      test:
+        - CMD
+        - pg_isready
+        - -h
+        - "127.0.0.1"
+        - -U
+        - chatting_app
+        - -d
+        - chatting_app
       interval: 5s
       timeout: 3s
       retries: 12
 
-  backend:
-    build: .
+  setup:
+    <<: *app-image
+    command: ["node", "server/setupDatabase.js"]
+    environment:
+      <<: *database-environment
     depends_on:
       db:
         condition: service_healthy
+    restart: "no"
+
+  backend:
+    <<: *app-image
+    depends_on:
+      db:
+        condition: service_healthy
+      setup:
+        condition: service_completed_successfully
     ports:
       - "0.0.0.0:3001:3001"
     environment:
+      <<: *database-environment
       PORT: "3001"
       FRONTEND_ORIGIN: "${FRONTEND_ORIGIN:?Set FRONTEND_ORIGIN in your env file}"
       GITHUB_CALLBACK_URL: "${GITHUB_CALLBACK_URL:?Set GITHUB_CALLBACK_URL in your env file}"
@@ -31,11 +59,6 @@ services:
       GITHUB_CLIENT_SECRET: "${GITHUB_CLIENT_SECRET:?Set GITHUB_CLIENT_SECRET in your env file}"
       SECRET_KEY1: "${SECRET_KEY1:?Set SECRET_KEY1 in your env file}"
       SECRET_KEY2: "${SECRET_KEY2:?Set SECRET_KEY2 in your env file}"
-      PGHOST: db
-      PGPORT: "5432"
-      PGDATABASE: chatting_app
-      PGUSER: chatting_app
-      PGPASSWORD: "${PGPASSWORD:?Set PGPASSWORD in your env file}"
 
 volumes:
   postgres_data:
