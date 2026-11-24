@@ -112,7 +112,7 @@ async function setupDatabase() {
         continue;
       }
 
-      await db.query(migration.sql);
+      await db.query(migration.sql.replace(/^\uFEFF/, ''));
 
       await db.query(
         'INSERT INTO schema_migrations (name, checksum) VALUES ($1, $2)',
