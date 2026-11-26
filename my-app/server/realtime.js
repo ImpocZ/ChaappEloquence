@@ -1,3 +1,4 @@
+// Socket.io 
 import { Server } from 'socket.io';
 import { pool } from './db.js';
 

@@ -1,3 +1,4 @@
+//Setup for db
 import 'dotenv/config';
 import { readdir, readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
